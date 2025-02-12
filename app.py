@@ -2,12 +2,18 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.title('Uber pickups in NYC')
+@st.cache_data
+def convert_csv(path):
+    df = pd.read_csv(path)
+    return df.to_csv().encode("utf-8")
 
-path = '/home/matrament/projects/magisterka/project/multiloops/data/02_intermediate/comparison_laing2009_fr3d.csv'
-path2 ='/home/matrament/projects/magisterka/project/multiloops/data/02_intermediate/comparison_lamiable2012_bpnet_new.csv'
+
+st.title('Multiloops 🧬')
+st.divider()
+
+path = 'data/comparison_lamiable2012_bpnet_new.csv'
 df = pd.read_csv(path)
-lamiable_2012 = pd.read_csv('/home/matrament/projects/magisterka/project/multiloops/data/01_raw/raw_dataset_lamiable2012.csv')
+
 
 def highlight_value(val):
     if val == 'Mismatch':
@@ -26,15 +32,7 @@ summary = pd.DataFrame({
 
 st.bar_chart(summary.set_index("Category"))
 
-
-@st.cache_data
-def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
-    return df.to_csv().encode("utf-8")
-
-csv = convert_df(lamiable_2012)
-csv2 = convert_df(lamiable_2012)
-
+st.dataframe(pd.read_csv('data/comparison_laing2009_fr3d.csv'), use_container_width=True)
 st.header("Dataset sources", divider="violet")
 
 
@@ -48,19 +46,19 @@ col11, col12, = st.columns(2)
 with col11:
     st.download_button(
         label="Download raw data",
-        data=csv,
-        file_name="large_df.csv",
+        data= convert_csv('data/raw_dataset_lamiable2012.csv'),
+        file_name="lamiable2012_raw.csv",
         mime="text/csv",
         key="lamiable2012_raw",
     )
 
 with col12:
     st.download_button(
-        label="Download raw data",
-        data=csv2,
-        file_name="large_df.csv",
+        label="Download processed data",
+        data= convert_csv('data/lamiable2012.csv'),
+        file_name="lamiable2012.csv",
         mime="text/csv",
-        key="lamiable2012_preprocessed",
+        key="lamiable2012",
     )
 st.divider()
 
@@ -76,19 +74,19 @@ col21, col22, = st.columns(2)
 with col21:
     st.download_button(
         label="Download raw data",
-        data=csv,
-        file_name="large_df.csv",
+        data=convert_csv('data/raw_dataset_laing2012.csv'),
+        file_name="laing2012_raw.csv",
         mime="text/csv",
         key="laing2012_raw",
     )
 
 with col22:
     st.download_button(
-        label="Download raw data",
-        data=csv2,
-        file_name="large_df.csv",
+        label="Download processed data",
+        data=convert_csv('data/laing2012.csv'),
+        file_name="laing2012.csv",
         mime="text/csv",
-        key="laing2012_preprocessed",
+        key="laing2012",
     )
 st.divider()
 
@@ -104,30 +102,30 @@ col31, col32, = st.columns(2)
 with col31:
     st.download_button(
         label="Download raw data",
-        data=csv,
-        file_name="large_df.csv",
+        data=convert_csv('data/raw_dataset_laing2009.csv'),
+        file_name="laing2009.csv",
         mime="text/csv",
         key="laing2009_raw",
     )
 
 with col32:
     st.download_button(
-        label="Download raw data",
-        data=csv2,
-        file_name="large_df.csv",
+        label="Download processed data",
+        data=convert_csv('data/laing2009.csv'),
+        file_name="laing2009.csv",
         mime="text/csv",
-        key="laing2009_preprocessed",
+        key="laing2009",
     )
 
-# Using object notation
-add_selectbox = st.sidebar.selectbox(
-    "How would you like to be contacted?",
-    ("Email", "Home phone", "Mobile phone")
-)
+# # Using object notation
+# add_selectbox = st.sidebar.selectbox(
+#     "How would you like to be contacted?",
+#     ("Email", "Home phone", "Mobile phone")
+# )
 
-# Using "with" notation
-with st.sidebar:
-    add_radio = st.radio(
-        "Choose a shipping method",
-        ("Standard (5-15 days)", "Express (2-5 days)")
-    )
+# # Using "with" notation
+# with st.sidebar:
+#     add_radio = st.radio(
+#         "Choose a shipping method",
+#         ("Standard (5-15 days)", "Express (2-5 days)")
+#     )
